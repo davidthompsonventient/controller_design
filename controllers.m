@@ -10,6 +10,10 @@ target_crossover = 0.8; % rad/s
 % Index of switching point between above and below-rated in Bladed output struct
 rated_index = 12;
 
+% Index of the operating point for applying the target gain-crossover frequency
+crossover_index_ar = 16; % above-rated
+crossover_index_br = 7; % below-rated
+
 % These indexes have had a wobble during linearisation.
 % If the wind speeds either side of them are OK then they can be safely excluded.
 excluded = [0];
@@ -121,7 +125,7 @@ PSET = 2.5e6;
 elec_eff = 0.95;
 TSET = (PSET / elec_eff) / WSET;
 
-[c1mag, ~] = bodemag(sys{16}(1,2) * C1 * GS_gain(16), target_crossover);
+[c1mag, ~] = bodemag(sys{crossover_index_ar}(1,2) * C1 * GS_gain(crossover_index_ar), target_crossover);
 [c2mag, ~] = bodemag(sys{7}(1,3) * C2, target_crossover);
 newC1k = C1k / c1mag
 newC2k = C2k / c2mag
