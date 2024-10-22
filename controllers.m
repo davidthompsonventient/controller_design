@@ -5,6 +5,7 @@
 
 C1 = zpk(-0.07, [0, -2.0], -1);
 C2 = zpk(-0.07,[0, -2.0], -1);
+target_crossover = 0.8; % rad/s
 
 % Index of switching point between above and below-rated in Bladed output struct
 rated_index = 12;
@@ -13,9 +14,11 @@ rated_index = 12;
 % If the wind speeds either side of them are OK then they can be safely excluded.
 excluded = [0];
 
+% gs.M = 1;
+% gs.C = 1;
+
 for j = 1:size(linmod.PitchAngles)(1)
     GS_gain(j) = 1 / polyval([gs.M, gs.C], linmod.PitchAngles(j));
-    GS_gain(j) = 1 / polyval([gs.M, 1.2], linmod.PitchAngles(j));
 end
 
 INCLUDE_CONTROLLERS = 1;
@@ -26,7 +29,7 @@ if (1)
         figure(1)
         for j = rated_index:size(sys)(2)
             disp(j)
-            if ~ismember(excludlined, j)
+            if ~ismember(excluded, j)
                 try
                     bode(sys{j}(1,2) * GS_gain(j))
                 catch
@@ -97,7 +100,6 @@ Ko = abs(Hmag(1));
 Kcp = 1 / Ko;
 Kp = C1k / C2k;
 
-pcoeffs = dlmread('pcoeffs.txt','\t',2,0);
 
 Cpmax = max(pcoeffs(:,2));
 lambda = pcoeffs(find((pcoeffs(:,2) == Cpmax)),1);
@@ -119,7 +121,7 @@ PSET = 2.5e6;
 elec_eff = 0.95;
 TSET = (PSET / elec_eff) / WSET;
 
-[c1mag, ~] = bodemag(sys{17}(1,2) * C1 * GS_gain(17), 1);
-[c2mag, ~] = bodemag(sys{7}(1,3) * C2, 1);
+[c1mag, ~] = bodemag(sys{16}(1,2) * C1 * GS_gain(16), target_crossover);
+[c2mag, ~] = bodemag(sys{7}(1,3) * C2, target_crossover);
 newC1k = C1k / c1mag
 newC2k = C2k / c2mag

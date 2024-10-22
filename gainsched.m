@@ -18,7 +18,8 @@ gs.trimend = 180; % should be the index of about 20deg pitch
 gs.gs = polyfit(gs.beta(gs.trim:gs.trimend), gs.dQdB(gs.trim:gs.trimend), 1);
 % gs.gs = polyfit(gs.beta(gs.trim:end), gs.dQdB(gs.trim:end), 1);
 
-gs.Bn = deg2rad(0);
+% Normalisation angle in degrees
+gs.Bn = 0;
 
 gs.gsn = gs.gs ./ polyval(gs.gs, gs.Bn);
 
