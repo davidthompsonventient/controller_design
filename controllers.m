@@ -104,6 +104,7 @@ Ko = abs(Hmag(1));
 Kcp = 1 / Ko;
 Kp = C1k / C2k;
 
+pcoeffs = dlmread('pcoeffs.txt','\t',2,0);
 
 Cpmax = max(pcoeffs(:,2));
 lambda = pcoeffs(find((pcoeffs(:,2) == Cpmax)),1);
